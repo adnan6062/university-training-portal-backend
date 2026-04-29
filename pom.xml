@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Project Coordinates
+    ══════════════════════════════════════════════════════════ -->
+    <groupId>com.university</groupId>
+    <artifactId>university-training-portal</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>University Training Portal</name>
+    <description>
+        University Training Portal – Microservices Edition.
+        Covers Identity, Catalog, Enrollment, Assessment and
+        Communication domains behind a Spring Cloud Gateway.
+    </description>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Modules
+    ══════════════════════════════════════════════════════════ -->
+    <modules>
+        <module>config-server</module>
+        <module>discovery-server</module>
+        <module>api-gateway</module>
+        <module>identity-service</module>
+        <module>catalog-service</module>
+        <module>enrollment-service</module>
+        <module>assessment-service</module>
+        <module>communication-service</module>
+    </modules>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Global Properties / Versions
+    ══════════════════════════════════════════════════════════ -->
+    <properties>
+        <!-- Java -->
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Spring -->
+        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-cloud.version>2024.0.0</spring-cloud.version>
+
+        <!-- Third-party -->
+        <jjwt.version>0.12.6</jjwt.version>
+        <springdoc.version>2.7.0</springdoc.version>
+        <resilience4j.version>2.2.0</resilience4j.version>
+        <lombok.version>1.18.36</lombok.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+    </properties>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Dependency Management (BOMs + explicit versions)
+    ══════════════════════════════════════════════════════════ -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- ── Spring Boot BOM ─────────────────────────────── -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- ── Spring Cloud BOM ────────────────────────────── -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- ── JWT (JJWT) ──────────────────────────────────── -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- ── Springdoc OpenAPI ───────────────────────────── -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- ── Resilience4j ────────────────────────────────── -->
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-boot3</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
+
+            <!-- ── Lombok ──────────────────────────────────────── -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Build – Plugin Management
+    ══════════════════════════════════════════════════════════ -->
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <!-- Spring Boot Maven Plugin -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <!-- Exclude Lombok from the fat JAR -->
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                        <!--
+                            Java 21 blocks reflective access to java.net internals by default.
+                            The Eureka client 2.0.4 uses Jersey HTTP which tries to configure
+                            HttpURLConnection via reflection for GET /eureka/apps (registry fetch).
+                            Without this flag the Eureka registry fetch throws
+                            InaccessibleObjectException and the gateway cannot resolve lb:// routes.
+                        -->
+                        <jvmArguments>--add-opens java.base/java.net=ALL-UNNAMED</jvmArguments>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Maven Compiler Plugin – Java 21 + Lombok annotation processor -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <!--
+                            -parameters  ← THE CRITICAL FLAG
+                            Spring Framework 6.x (Spring Boot 3.x) no longer uses
+                            LocalVariableTableParameterNameDiscoverer to read parameter
+                            names from debug bytecode.  It now relies exclusively on the
+                            -parameters compiler flag which stores method parameter names
+                            in the .class file's MethodParameters attribute.
+
+                            Without this flag:
+                              • @PathVariable Long id  →  name is unknown at runtime
+                              • @RequestParam String q →  name is unknown at runtime
+                              • SpringDoc generates an OpenAPI spec with NO parameters
+                              • Swagger UI shows "No parameters" for every endpoint
+                        -->
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!-- Maven Surefire Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

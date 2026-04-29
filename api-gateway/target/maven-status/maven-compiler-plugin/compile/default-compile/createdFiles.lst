@@ -1,0 +1,4 @@
+com\university\gateway\filter\JwtAuthFilter.class
+com\university\gateway\security\JwtUtil.class
+com\university\gateway\ApiGatewayApplication.class
+com\university\gateway\config\SecurityConfig.class

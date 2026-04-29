@@ -1,0 +1,7 @@
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\ApiGatewayApplication.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\config\OpenApiConfig.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\config\SecurityConfig.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\controller\FallbackController.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\controller\SwaggerProxyController.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\filter\JwtAuthFilter.java
+C:\Users\2486062\OneDrive - Cognizant\Desktop\Microservices 2\Microservices\api-gateway\src\main\java\com\university\gateway\security\JwtUtil.java
